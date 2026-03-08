@@ -1,21 +1,19 @@
 import Link from "next/link"
 import { accents } from "@/data/accents"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, BookOpen, ChevronRight, Mic } from "lucide-react"
 
 const categoryColors: Record<string, string> = {
-  vowels: "bg-blue-500/20 text-blue-400 border-blue-500/30",
-  consonants: "bg-purple-500/20 text-purple-400 border-purple-500/30",
-  rhythm: "bg-orange-500/20 text-orange-400 border-orange-500/30",
-  intonation: "bg-pink-500/20 text-pink-400 border-pink-500/30",
-  phrases: "bg-green-500/20 text-green-400 border-green-500/30",
+  vowels: "bg-blue-500/15 text-blue-400",
+  consonants: "bg-purple-500/15 text-purple-400",
+  rhythm: "bg-orange-500/15 text-orange-400",
+  intonation: "bg-pink-500/15 text-pink-400",
+  phrases: "bg-emerald-500/15 text-emerald-400",
 }
 
-const difficultyColors: Record<string, string> = {
-  beginner: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
-  intermediate: "bg-amber-500/20 text-amber-400 border-amber-500/30",
-  advanced: "bg-red-500/20 text-red-400 border-red-500/30",
+const difficultyConfig: Record<string, { colors: string; label: string }> = {
+  beginner: { colors: "bg-emerald-500/15 text-emerald-400", label: "Beginner" },
+  intermediate: { colors: "bg-amber-500/15 text-amber-400", label: "Intermediate" },
+  advanced: { colors: "bg-rose-500/15 text-rose-400", label: "Advanced" },
 }
 
 export default async function AccentPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -25,14 +23,14 @@ export default async function AccentPage({ params }: { params: Promise<{ slug: s
 
   if (!accent) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-black text-zinc-50">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-950 text-white">
         <h1 className="text-2xl font-semibold">Accent not found</h1>
         <p className="mt-2 text-zinc-400">
           The accent you&apos;re looking for doesn&apos;t exist.
         </p>
         <Link
           href="/"
-          className="mt-6 inline-flex items-center gap-2 text-sm text-zinc-400 transition-colors hover:text-zinc-50"
+          className="mt-6 inline-flex items-center gap-2 text-sm text-zinc-500 transition-colors hover:text-white"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to All Accents
@@ -41,59 +39,65 @@ export default async function AccentPage({ params }: { params: Promise<{ slug: s
     )
   }
 
+  const difficulty = difficultyConfig[accent.difficulty]
+
   return (
-    <div className="min-h-screen bg-black text-zinc-50">
+    <div className="min-h-screen bg-zinc-950 text-white">
       <div className="mx-auto max-w-4xl px-6 py-12">
+
         {/* Back link */}
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-sm text-zinc-400 transition-colors hover:text-zinc-50"
+          className="inline-flex items-center gap-1.5 text-sm text-zinc-500 transition-colors hover:text-white"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-3.5 w-3.5" />
           All Accents
         </Link>
 
-        {/* Accent header */}
-        <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
-          <span className="text-6xl">{accent.emoji}</span>
+        {/* Accent Header */}
+        <div className="mt-10 flex flex-col gap-6 sm:flex-row sm:items-start">
+          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-white/[0.03] border border-white/[0.06]">
+            <span className="text-4xl">{accent.emoji}</span>
+          </div>
+
           <div className="flex-1">
-            <div className="flex flex-wrap items-center gap-3">
-              <h1 className="text-3xl font-bold tracking-tight">{accent.name}</h1>
-              <Badge
-                className={`${difficultyColors[accent.difficulty]} border text-xs capitalize`}
-              >
-                {accent.difficulty}
-              </Badge>
+            <h1 className="text-3xl font-bold text-white">{accent.name}</h1>
+
+            <div className="mt-2 flex items-center gap-3">
+              <span className="text-sm text-zinc-500">{accent.region}</span>
+              <span className={`${difficulty.colors} rounded-full px-3 py-1 text-xs font-medium`}>
+                {difficulty.label}
+              </span>
             </div>
-            <p className="mt-1 text-sm text-zinc-400">{accent.region}</p>
-            <p className="mt-4 max-w-2xl leading-relaxed text-zinc-300">
+
+            <p className="mt-4 max-w-2xl leading-relaxed text-zinc-400">
               {accent.description}
             </p>
           </div>
         </div>
 
         {/* Key Features */}
-        <div className="mt-10">
-          <h2 className="text-lg font-semibold">Key Features</h2>
-          <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+        <div className="mt-12">
+          <h2 className="text-lg font-semibold text-white">Key Features</h2>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
             {accent.keyFeatures.map((feature, i) => (
-              <li
+              <div
                 key={i}
-                className="flex items-start gap-2 text-sm text-zinc-300"
+                className="flex items-start gap-2.5 text-sm text-zinc-300"
               >
-                <span className="mt-0.5 text-emerald-400">&#10003;</span>
+                <span className="mt-0.5 text-violet-400">&#10003;</span>
                 {feature}
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
 
-        {/* Lessons section */}
-        <div className="mt-12">
-          <div className="flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-zinc-400" />
-            <h2 className="text-lg font-semibold">Lessons</h2>
-            <span className="text-sm text-zinc-500">
+        {/* Lessons */}
+        <div className="mt-14">
+          <div className="flex items-center gap-2.5">
+            <BookOpen className="h-5 w-5 text-zinc-500" />
+            <h2 className="text-lg font-semibold text-white">Lessons</h2>
+            <span className="text-sm text-zinc-600">
               ({accent.lessons.length})
             </span>
           </div>
@@ -107,61 +111,39 @@ export default async function AccentPage({ params }: { params: Promise<{ slug: s
                   href={`/accent/${slug}/practice/${lesson.slug}`}
                   className="group"
                 >
-                  <Card className="h-full border-zinc-800 bg-zinc-900/60 transition-all duration-200 group-hover:border-zinc-600 group-hover:bg-zinc-900">
-                    <CardHeader>
-                      <div className="flex items-start gap-3">
-                        {/* Lesson order circle */}
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-800 text-sm font-semibold text-zinc-300 group-hover:bg-zinc-700">
-                          {lesson.lessonOrder}
-                        </div>
-                        <div className="flex-1">
-                          <CardTitle className="flex items-center justify-between text-zinc-50">
-                            <span>{lesson.title}</span>
-                            <ChevronRight className="h-4 w-4 shrink-0 text-zinc-600 transition-transform group-hover:translate-x-0.5 group-hover:text-zinc-400" />
-                          </CardTitle>
-                          <p className="mt-1 text-sm leading-relaxed text-zinc-400">
-                            {lesson.description}
-                          </p>
-                        </div>
+                  <div className="h-full rounded-2xl bg-white/[0.03] border border-white/[0.06] p-5 transition-all duration-200 group-hover:border-white/[0.12] group-hover:scale-[1.01]">
+                    {/* Top row: number + title + chevron */}
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-violet-500/15 text-xs font-semibold text-violet-400">
+                        {lesson.lessonOrder}
                       </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <Badge
-                          className={`${categoryColors[lesson.category]} border text-xs capitalize`}
-                        >
-                          {lesson.category}
-                        </Badge>
-                        <span className="inline-flex items-center gap-1 text-xs text-zinc-500">
-                          <Mic className="h-3 w-3" />
-                          {lesson.practiceWords.length} practice words
-                        </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="font-semibold text-zinc-100">{lesson.title}</span>
+                          <ChevronRight className="h-4 w-4 shrink-0 text-zinc-700 transition-all group-hover:translate-x-0.5 group-hover:text-zinc-400" />
+                        </div>
+                        <p className="mt-1 text-sm leading-relaxed text-zinc-400">
+                          {lesson.description}
+                        </p>
                       </div>
+                    </div>
 
-                      {/* Tips preview */}
-                      {lesson.tips.length > 0 && (
-                        <ul className="mt-3 space-y-1">
-                          {lesson.tips.slice(0, 2).map((tip, i) => (
-                            <li
-                              key={i}
-                              className="text-xs leading-relaxed text-zinc-500"
-                            >
-                              &bull; {tip}
-                            </li>
-                          ))}
-                          {lesson.tips.length > 2 && (
-                            <li className="text-xs text-zinc-600">
-                              +{lesson.tips.length - 2} more tips
-                            </li>
-                          )}
-                        </ul>
-                      )}
-                    </CardContent>
-                  </Card>
+                    {/* Bottom row: category + word count */}
+                    <div className="mt-4 flex items-center gap-3">
+                      <span className={`${categoryColors[lesson.category]} rounded-full px-2.5 py-0.5 text-xs font-medium capitalize`}>
+                        {lesson.category}
+                      </span>
+                      <span className="inline-flex items-center gap-1 text-xs text-zinc-600">
+                        <Mic className="h-3 w-3" />
+                        {lesson.practiceWords.length} words
+                      </span>
+                    </div>
+                  </div>
                 </Link>
               ))}
           </div>
         </div>
+
       </div>
     </div>
   )

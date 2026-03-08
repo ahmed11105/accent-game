@@ -3,9 +3,6 @@
 import { useState, useCallback, useEffect, useRef } from "react"
 import { accents, type AccentData } from "@/data/accents"
 import { speakText } from "@/lib/speech"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
 import {
   Volume2,
   RotateCcw,
@@ -227,57 +224,48 @@ export default function GuessTheAccentPage() {
   if (gameState === "intro") {
     return (
       <div className="min-h-screen bg-zinc-950 text-zinc-100">
-        <div className="mx-auto max-w-2xl px-4 py-24 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-violet-500/10 ring-1 ring-violet-500/30">
-              <Ear className="h-10 w-10 text-violet-400" />
+        <div className="mx-auto max-w-2xl px-6 py-28 sm:px-8 lg:px-10">
+          <div className="flex flex-col items-center text-center">
+            <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500/20 to-indigo-500/20 border border-violet-500/20">
+              <Ear className="h-8 w-8 text-violet-400" />
             </div>
 
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-              <span className="bg-gradient-to-r from-zinc-100 via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-violet-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">
                 Guess the Accent
               </span>
             </h1>
 
-            <p className="mt-4 text-lg text-zinc-400 leading-relaxed">
+            <p className="mt-4 text-lg text-zinc-400 leading-relaxed max-w-md">
               Listen to a phrase and guess which accent it is.
               <br />
               Can you identify all 8 accents?
             </p>
 
-            <div className="mt-10 space-y-3 text-sm text-zinc-500 text-left mx-auto max-w-xs">
+            <div className="mt-10 space-y-4 text-sm text-left max-w-xs">
               <div className="flex items-start gap-3">
-                <Badge
-                  variant="outline"
-                  className="shrink-0 border-zinc-700 text-zinc-400"
-                >
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-500/15 text-xs font-semibold text-violet-400">
                   1
-                </Badge>
-                <span>Listen to a phrase spoken in a mystery accent</span>
+                </span>
+                <span className="text-zinc-500">Listen to a phrase spoken in a mystery accent</span>
               </div>
               <div className="flex items-start gap-3">
-                <Badge
-                  variant="outline"
-                  className="shrink-0 border-zinc-700 text-zinc-400"
-                >
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-500/15 text-xs font-semibold text-violet-400">
                   2
-                </Badge>
-                <span>Pick the correct accent from 4 choices</span>
+                </span>
+                <span className="text-zinc-500">Pick the correct accent from 4 choices</span>
               </div>
               <div className="flex items-start gap-3">
-                <Badge
-                  variant="outline"
-                  className="shrink-0 border-zinc-700 text-zinc-400"
-                >
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-500/15 text-xs font-semibold text-violet-400">
                   3
-                </Badge>
-                <span>Score points across 10 rounds</span>
+                </span>
+                <span className="text-zinc-500">Score points across 10 rounds</span>
               </div>
             </div>
 
             <button
               onClick={startGame}
-              className="mt-12 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-violet-500/25 transition-all duration-200 hover:bg-violet-500 hover:shadow-violet-500/40 hover:scale-105 active:scale-100"
+              className="mt-12 inline-flex items-center gap-2 bg-gradient-to-r from-violet-500 to-indigo-600 rounded-xl px-8 py-3.5 text-white font-semibold shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:scale-105 transition-all duration-200 active:scale-100"
             >
               <Play className="h-5 w-5" />
               Start Game
@@ -290,18 +278,23 @@ export default function GuessTheAccentPage() {
 
   // Game Over Screen
   if (gameState === "gameover") {
+    const isPerfect = score === TOTAL_ROUNDS
     return (
       <div className="min-h-screen bg-zinc-950 text-zinc-100">
-        <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-2xl px-6 py-16 sm:px-8 lg:px-10">
           <div className="text-center">
-            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-amber-500/10 ring-1 ring-amber-500/30">
-              <Trophy className="h-10 w-10 text-amber-400" />
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-500/20">
+              <Trophy className="h-8 w-8 text-amber-400" />
             </div>
 
-            <h1 className="text-4xl font-bold tracking-tight">Game Over!</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-zinc-100">
+              Game Over!
+            </h1>
 
-            <p className="mt-4 text-5xl font-bold text-violet-400">
-              {score}
+            <p className="mt-4">
+              <span className={`text-5xl font-bold ${isPerfect ? "bg-gradient-to-r from-violet-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent" : "text-violet-400"}`}>
+                {score}
+              </span>
               <span className="text-2xl text-zinc-500"> / {TOTAL_ROUNDS}</span>
             </p>
 
@@ -311,44 +304,47 @@ export default function GuessTheAccentPage() {
           </div>
 
           {/* Round History */}
-          <div className="mt-10 space-y-2">
+          <div className="mt-10">
             <h2 className="text-sm font-medium text-zinc-500 uppercase tracking-wide mb-4">
               Round History
             </h2>
-            {roundHistory.map((entry, i) => (
-              <div
-                key={i}
-                className={`flex items-center gap-3 rounded-lg border px-4 py-3 ${
-                  entry.correct
-                    ? "border-green-500/30 bg-green-500/5"
-                    : "border-red-500/30 bg-red-500/5"
-                }`}
-              >
-                <span className="text-xs font-medium text-zinc-500 w-6">
-                  {i + 1}.
-                </span>
-                {entry.correct ? (
-                  <Check className="h-4 w-4 shrink-0 text-green-400" />
-                ) : (
-                  <X className="h-4 w-4 shrink-0 text-red-400" />
-                )}
-                <span className="text-sm text-zinc-300 flex-1">
-                  {entry.accent}
-                </span>
-                {!entry.correct && (
-                  <span className="text-xs text-zinc-500">
-                    Guessed: {entry.guess}
+            <div className="space-y-1.5">
+              {roundHistory.map((entry, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-3 rounded-lg px-4 py-3 bg-white/[0.02]"
+                >
+                  <div
+                    className={`w-0.5 h-6 rounded-full shrink-0 ${
+                      entry.correct ? "bg-emerald-500" : "bg-rose-500"
+                    }`}
+                  />
+                  <span className="text-xs font-medium text-zinc-600 w-5">
+                    {i + 1}
                   </span>
-                )}
-              </div>
-            ))}
+                  {entry.correct ? (
+                    <Check className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
+                  ) : (
+                    <X className="h-3.5 w-3.5 shrink-0 text-rose-400" />
+                  )}
+                  <span className="text-sm text-zinc-300 flex-1">
+                    {entry.accent}
+                  </span>
+                  {!entry.correct && (
+                    <span className="text-xs text-zinc-500">
+                      Guessed: {entry.guess}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Actions */}
           <div className="mt-10 flex flex-col items-center gap-4">
             <button
               onClick={startGame}
-              className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-violet-500/25 transition-all duration-200 hover:bg-violet-500 hover:shadow-violet-500/40 hover:scale-105 active:scale-100"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-violet-500 to-indigo-600 rounded-xl px-8 py-3.5 text-white font-semibold shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:scale-105 transition-all duration-200 active:scale-100"
             >
               <RotateCcw className="h-5 w-5" />
               Play Again
@@ -368,112 +364,107 @@ export default function GuessTheAccentPage() {
   // Listening / Guessing / Result Screens
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100">
-      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* Top Bar: Round + Score + Progress */}
+      <div className="mx-auto max-w-3xl px-6 py-8 sm:px-8 lg:px-10">
+        {/* Top Bar: Progress + Round + Score */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-medium text-zinc-400">
-              Round{" "}
-              <span className="text-zinc-100">{currentRound}</span> of{" "}
-              {TOTAL_ROUNDS}
-            </span>
-            <Badge
-              variant="outline"
-              className="border-violet-500/50 text-violet-400"
-            >
-              Score: {score}
-            </Badge>
+          <div className="h-1 bg-zinc-900 rounded-full overflow-hidden mb-4">
+            <div
+              className="h-full bg-gradient-to-r from-violet-500 to-indigo-500 rounded-full transition-all duration-500 ease-out"
+              style={{ width: `${(currentRound / TOTAL_ROUNDS) * 100}%` }}
+            />
           </div>
-          <Progress
-            value={(currentRound / TOTAL_ROUNDS) * 100}
-            className="h-2 bg-zinc-800"
-          />
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-zinc-500">
+              Round <span className="text-zinc-300 font-medium">{currentRound}</span> of {TOTAL_ROUNDS}
+            </span>
+            <span className="text-sm font-medium bg-violet-500/15 text-violet-400 rounded-full px-3 py-1">
+              Score: {score}
+            </span>
+          </div>
         </div>
 
         {/* Result Screen Overlay */}
         {gameState === "result" && currentAccent && (
           <div className="mb-8">
-            <Card
-              className={`border ${
+            <div
+              className={`rounded-2xl border bg-white/[0.03] backdrop-blur-sm p-6 ${
                 isCorrect
-                  ? "border-green-500/40 bg-green-500/5"
-                  : "border-red-500/40 bg-red-500/5"
+                  ? "border-emerald-500/40"
+                  : "border-rose-500/40"
               }`}
             >
-              <CardContent className="p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  {isCorrect ? (
-                    <>
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-500/20">
-                        <Check className="h-5 w-5 text-green-400" />
-                      </div>
-                      <span className="text-xl font-bold text-green-400">
-                        Correct!
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500/20">
-                        <X className="h-5 w-5 text-red-400" />
-                      </div>
-                      <span className="text-xl font-bold text-red-400">
-                        Not quite!
-                      </span>
-                    </>
-                  )}
-                </div>
-
-                <div className="space-y-3">
-                  <p className="text-zinc-300">
-                    <span className="text-zinc-500">The accent was: </span>
-                    <span className="font-semibold">
-                      {currentAccent.emoji} {currentAccent.name}
+              <div className="flex items-center gap-3 mb-4">
+                {isCorrect ? (
+                  <>
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/20 border border-emerald-500/30">
+                      <Check className="h-5 w-5 text-emerald-400" />
+                    </div>
+                    <span className="text-xl font-bold text-emerald-400">
+                      Correct!
                     </span>
-                    <span className="text-zinc-500">
-                      {" "}
-                      — {currentAccent.region}
+                  </>
+                ) : (
+                  <>
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-500/20 border border-rose-500/30">
+                      <X className="h-5 w-5 text-rose-400" />
+                    </div>
+                    <span className="text-xl font-bold text-rose-400">
+                      Not quite!
+                    </span>
+                  </>
+                )}
+              </div>
+
+              <div className="space-y-3">
+                <p className="text-zinc-300">
+                  <span className="text-zinc-500">The accent was: </span>
+                  <span className="font-semibold">
+                    {currentAccent.emoji} {currentAccent.name}
+                  </span>
+                  <span className="text-zinc-500">
+                    {" "}
+                    — {currentAccent.region}
+                  </span>
+                </p>
+
+                {!isCorrect && selectedAccent && (
+                  <p className="text-sm text-zinc-500">
+                    You guessed:{" "}
+                    <span className="text-zinc-400">
+                      {selectedAccent.emoji} {selectedAccent.name}
                     </span>
                   </p>
+                )}
 
-                  {!isCorrect && selectedAccent && (
-                    <p className="text-sm text-zinc-500">
-                      You guessed:{" "}
-                      <span className="text-zinc-400">
-                        {selectedAccent.emoji} {selectedAccent.name}
-                      </span>
-                    </p>
-                  )}
+                <p className="text-sm text-zinc-400 italic border-l-2 border-zinc-800 pl-3">
+                  &ldquo;{currentPhrase}&rdquo;
+                </p>
 
-                  <p className="text-sm text-zinc-400 italic border-l-2 border-zinc-700 pl-3">
-                    &ldquo;{currentPhrase}&rdquo;
+                {currentAccent.keyFeatures.length > 0 && (
+                  <p className="text-sm text-zinc-500">
+                    <span className="text-violet-400 font-medium">Tip: </span>
+                    {currentAccent.keyFeatures[0]}
                   </p>
+                )}
+              </div>
 
-                  {currentAccent.keyFeatures.length > 0 && (
-                    <p className="text-sm text-zinc-500">
-                      <span className="text-violet-400 font-medium">Tip: </span>
-                      {currentAccent.keyFeatures[0]}
-                    </p>
-                  )}
-                </div>
-
-                <button
-                  onClick={nextRound}
-                  className="mt-6 inline-flex items-center gap-2 rounded-lg bg-violet-600 px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-violet-500 hover:scale-105 active:scale-100"
-                >
-                  {currentRound >= TOTAL_ROUNDS ? (
-                    <>
-                      See Results
-                      <Trophy className="h-4 w-4" />
-                    </>
-                  ) : (
-                    <>
-                      Next Round
-                      <ArrowRight className="h-4 w-4" />
-                    </>
-                  )}
-                </button>
-              </CardContent>
-            </Card>
+              <button
+                onClick={nextRound}
+                className="mt-6 inline-flex items-center gap-2 bg-gradient-to-r from-violet-500 to-indigo-600 rounded-xl px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:scale-105 transition-all duration-200 active:scale-100"
+              >
+                {currentRound >= TOTAL_ROUNDS ? (
+                  <>
+                    See Results
+                    <Trophy className="h-4 w-4" />
+                  </>
+                ) : (
+                  <>
+                    Next Round
+                    <ArrowRight className="h-4 w-4" />
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         )}
 
@@ -488,7 +479,7 @@ export default function GuessTheAccentPage() {
                 }
               }}
               disabled={isPlaying}
-              className="group relative mx-auto mb-4 flex h-28 w-28 items-center justify-center rounded-full bg-zinc-900 ring-2 ring-zinc-700 transition-all duration-300 hover:ring-violet-500/50 hover:bg-zinc-800 disabled:opacity-70"
+              className="group relative mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-white/[0.04] border-2 border-white/[0.08] transition-all duration-300 hover:border-violet-500/40 hover:bg-white/[0.06] disabled:opacity-70"
             >
               {/* Pulse animation when playing */}
               {isPlaying && (
@@ -498,9 +489,9 @@ export default function GuessTheAccentPage() {
                 </>
               )}
               {isPlaying ? (
-                <Volume2 className="h-12 w-12 text-violet-400 animate-pulse" />
+                <Volume2 className="h-10 w-10 text-violet-400 animate-pulse" />
               ) : (
-                <Play className="h-12 w-12 text-zinc-300 transition-colors group-hover:text-violet-400" />
+                <Play className="h-10 w-10 text-zinc-300 transition-colors group-hover:text-violet-400" />
               )}
             </button>
 
@@ -526,7 +517,7 @@ export default function GuessTheAccentPage() {
           </div>
         )}
 
-        {/* Choices Grid — interactive during listening/guessing, static during result */}
+        {/* Choices Grid — interactive during listening/guessing */}
         {(gameState === "listening" || gameState === "guessing") && (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {choices.map((accent) => (
@@ -535,21 +526,19 @@ export default function GuessTheAccentPage() {
                 onClick={() => handleGuess(accent.slug)}
                 className="group text-left transition-all duration-200 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 hover:scale-[1.02] active:scale-[0.99]"
               >
-                <Card className="h-full transition-all duration-200 border-zinc-800 bg-zinc-900/60 group-hover:border-violet-500/40 group-hover:bg-zinc-900">
-                  <CardContent className="flex items-center gap-4 p-4">
-                    <span className="text-3xl" role="img">
-                      {accent.emoji}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="font-semibold text-zinc-100 truncate">
-                        {accent.name}
-                      </p>
-                      <p className="text-sm text-zinc-500 truncate">
-                        {accent.region}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
+                <div className="h-full flex items-center gap-4 p-4 rounded-xl bg-white/[0.03] border border-white/[0.06] transition-all duration-200 group-hover:border-white/[0.12] group-hover:bg-white/[0.06]">
+                  <span className="text-3xl" role="img">
+                    {accent.emoji}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-zinc-100 truncate">
+                      {accent.name}
+                    </p>
+                    <p className="text-sm text-zinc-500 truncate">
+                      {accent.region}
+                    </p>
+                  </div>
+                </div>
               </button>
             ))}
           </div>
@@ -564,36 +553,33 @@ export default function GuessTheAccentPage() {
               const isWrong = isSelected && !isCorrectAnswer
 
               return (
-                <div key={accent.slug} className="rounded-xl">
-                  <Card
-                    className={`h-full transition-all duration-200 ${
-                      isCorrectAnswer
-                        ? "border-green-500/60 bg-green-500/10"
-                        : isWrong
-                          ? "border-red-500/60 bg-red-500/10"
-                          : "border-zinc-800/50 bg-zinc-900/30 opacity-50"
-                    }`}
-                  >
-                    <CardContent className="flex items-center gap-4 p-4">
-                      <span className="text-3xl" role="img">
-                        {accent.emoji}
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <p className="font-semibold text-zinc-100 truncate">
-                          {accent.name}
-                        </p>
-                        <p className="text-sm text-zinc-500 truncate">
-                          {accent.region}
-                        </p>
-                      </div>
-                      {isCorrectAnswer && (
-                        <Check className="h-5 w-5 shrink-0 text-green-400" />
-                      )}
-                      {isWrong && (
-                        <X className="h-5 w-5 shrink-0 text-red-400" />
-                      )}
-                    </CardContent>
-                  </Card>
+                <div
+                  key={accent.slug}
+                  className={`flex items-center gap-4 p-4 rounded-xl border transition-all duration-200 ${
+                    isCorrectAnswer
+                      ? "border-emerald-500/50 bg-emerald-500/[0.08]"
+                      : isWrong
+                        ? "border-rose-500/50 bg-rose-500/[0.08]"
+                        : "border-white/[0.04] bg-white/[0.02] opacity-40"
+                  }`}
+                >
+                  <span className="text-3xl" role="img">
+                    {accent.emoji}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-zinc-100 truncate">
+                      {accent.name}
+                    </p>
+                    <p className="text-sm text-zinc-500 truncate">
+                      {accent.region}
+                    </p>
+                  </div>
+                  {isCorrectAnswer && (
+                    <Check className="h-5 w-5 shrink-0 text-emerald-400" />
+                  )}
+                  {isWrong && (
+                    <X className="h-5 w-5 shrink-0 text-rose-400" />
+                  )}
                 </div>
               )
             })}

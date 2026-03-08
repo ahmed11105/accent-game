@@ -2,10 +2,6 @@
 
 import { use, useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
-import { Separator } from '@/components/ui/separator'
 import { accents, PracticeWordData } from '@/data/accents'
 import { speakText, isSpeechRecognitionSupported, createSpeechRecognition } from '@/lib/speech'
 import { generateFeedback, FeedbackResult } from '@/lib/feedback'
@@ -229,30 +225,26 @@ export default function PracticePage({
 
   if (!accent) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="max-w-md w-full">
-          <CardContent className="pt-6 text-center">
-            <p className="text-muted-foreground text-lg">Accent not found.</p>
-            <Link href="/" className="text-primary underline mt-4 inline-block">
-              Go home
-            </Link>
-          </CardContent>
-        </Card>
+      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+        <div className="max-w-md w-full bg-white/[0.03] border border-white/[0.06] rounded-2xl p-6 text-center">
+          <p className="text-zinc-400 text-lg">Accent not found.</p>
+          <Link href="/" className="text-violet-400 underline mt-4 inline-block">
+            Go home
+          </Link>
+        </div>
       </div>
     )
   }
 
   if (!lesson || words.length === 0) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="max-w-md w-full">
-          <CardContent className="pt-6 text-center">
-            <p className="text-muted-foreground text-lg">Lesson not found or has no practice words.</p>
-            <Link href={`/accent/${slug}`} className="text-primary underline mt-4 inline-block">
-              Back to {accent.name}
-            </Link>
-          </CardContent>
-        </Card>
+      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+        <div className="max-w-md w-full bg-white/[0.03] border border-white/[0.06] rounded-2xl p-6 text-center">
+          <p className="text-zinc-400 text-lg">Lesson not found or has no practice words.</p>
+          <Link href={`/accent/${slug}`} className="text-violet-400 underline mt-4 inline-block">
+            Back to {accent.name}
+          </Link>
+        </div>
       </div>
     )
   }
@@ -260,7 +252,7 @@ export default function PracticePage({
   // ---- Render ----
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-zinc-950 text-white">
       {/* Hidden element to hold transcript for onend handler */}
       <span data-transcript={transcript} className="hidden" />
 
@@ -275,30 +267,32 @@ export default function PracticePage({
       )}
 
       {/* ===== Top Bar ===== */}
-      <header className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b border-border">
+      <header className="sticky top-0 z-10 bg-zinc-950/80 backdrop-blur-xl border-b border-white/[0.06]">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link
             href={`/accent/${slug}`}
-            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="flex items-center gap-1.5 text-sm text-zinc-500 hover:text-white transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             <span className="hidden sm:inline">{accent.name}</span>
           </Link>
 
           <div className="text-center flex-1 mx-4">
-            <h1 className="text-sm font-semibold truncate">{lesson.title}</h1>
+            <h1 className="text-sm font-medium text-zinc-200 truncate">{lesson.title}</h1>
           </div>
 
-          <Badge variant="secondary" className="text-xs whitespace-nowrap">
+          <span className="bg-violet-500/15 text-violet-400 text-xs font-medium px-2.5 py-1 rounded-full whitespace-nowrap">
             {currentWordIndex + 1} of {words.length}
-          </Badge>
+          </span>
         </div>
 
         {/* Progress bar */}
-        <Progress
-          value={((currentWordIndex + 1) / words.length) * 100}
-          className="h-1 rounded-none"
-        />
+        <div className="h-0.5 w-full bg-white/[0.04]">
+          <div
+            className="h-full bg-violet-500 rounded-full transition-all duration-300"
+            style={{ width: `${((currentWordIndex + 1) / words.length) * 100}%` }}
+          />
+        </div>
       </header>
 
       {/* ===== Main Content ===== */}
@@ -308,28 +302,27 @@ export default function PracticePage({
           <section className="text-center space-y-4">
             {/* Word + Speaker */}
             <div className="flex items-center justify-center gap-3">
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+              <h2 className="text-4xl sm:text-5xl font-bold text-white tracking-tight">
                 {currentWord.word}
               </h2>
               <button
                 onClick={handleSpeak}
                 disabled={isPlaying}
-                className="p-2 rounded-full hover:bg-muted transition-colors disabled:opacity-50"
+                className="h-10 w-10 rounded-xl bg-white/[0.06] hover:bg-violet-500/20 hover:text-violet-400 transition-all flex items-center justify-center disabled:opacity-50"
                 aria-label="Listen to pronunciation"
               >
                 <Volume2
-                  className={`h-6 w-6 ${isPlaying ? 'text-primary animate-pulse' : 'text-muted-foreground'}`}
+                  className={`h-5 w-5 ${isPlaying ? 'text-violet-400 animate-pulse' : 'text-zinc-400'}`}
                 />
               </button>
             </div>
 
             {/* IPA Display */}
-            <div className="inline-flex items-center gap-2 bg-muted/50 border border-border rounded-lg px-4 py-2">
-              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            <div className="inline-flex items-center gap-3 bg-white/[0.04] border border-white/[0.08] rounded-xl px-5 py-2.5">
+              <span className="text-xs text-zinc-600 uppercase tracking-wider font-medium">
                 IPA
               </span>
-              <Separator orientation="vertical" className="h-4" />
-              <span className="text-lg font-mono text-primary">
+              <span className="text-lg font-mono text-violet-400">
                 {currentWord.accentIPA}
               </span>
             </div>
@@ -337,9 +330,9 @@ export default function PracticePage({
             {/* Show phonetic detail toggle */}
             <button
               onClick={() => setShowPhonetics(!showPhonetics)}
-              className="flex items-center gap-1 mx-auto text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="flex items-center gap-1 mx-auto text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
             >
-              {showPhonetics ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              {showPhonetics ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
               {showPhonetics ? 'Hide' : 'Show'} phonetic detail
             </button>
           </section>
@@ -347,71 +340,65 @@ export default function PracticePage({
 
         {/* ===== Expandable Detail Panel ===== */}
         {currentWord && showPhonetics && (
-          <Card className="overflow-hidden animate-in slide-in-from-top-2 duration-200">
-            <CardContent className="pt-5 space-y-4">
-              {/* Pronunciation notes */}
-              {currentWord.pronunciationNotes && (
-                <div>
-                  <p className="text-sm text-foreground leading-relaxed">
-                    {currentWord.pronunciationNotes}
+          <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-5 space-y-5 animate-in slide-in-from-top-2 duration-200">
+            {/* Pronunciation notes */}
+            {currentWord.pronunciationNotes && (
+              <p className="text-sm text-zinc-300 leading-relaxed">
+                {currentWord.pronunciationNotes}
+              </p>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Mouth position */}
+              {currentWord.mouthPosition && (
+                <div className="bg-white/[0.03] rounded-xl p-4 space-y-1.5">
+                  <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                    Mouth Position
                   </p>
+                  <p className="text-sm text-zinc-200">{currentWord.mouthPosition}</p>
                 </div>
               )}
 
-              <Separator />
+              {/* Tongue placement */}
+              {currentWord.tonguePlacement && (
+                <div className="bg-white/[0.03] rounded-xl p-4 space-y-1.5">
+                  <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                    Tongue Placement
+                  </p>
+                  <p className="text-sm text-zinc-200">{currentWord.tonguePlacement}</p>
+                </div>
+              )}
+            </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Mouth position */}
-                {currentWord.mouthPosition && (
-                  <div className="space-y-1">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Mouth Position
-                    </p>
-                    <p className="text-sm text-foreground">{currentWord.mouthPosition}</p>
-                  </div>
-                )}
-
-                {/* Tongue placement */}
-                {currentWord.tonguePlacement && (
-                  <div className="space-y-1">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Tongue Placement
-                    </p>
-                    <p className="text-sm text-foreground">{currentWord.tonguePlacement}</p>
-                  </div>
-                )}
+            {/* Common mistakes */}
+            {currentWord.commonMistakes.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                  Common Mistakes
+                </p>
+                <ul className="space-y-1.5">
+                  {currentWord.commonMistakes.map((mistake, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-zinc-300">
+                      <X className="h-4 w-4 text-red-400 mt-0.5 shrink-0" />
+                      <span>{mistake}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
+            )}
 
-              {/* Common mistakes */}
-              {currentWord.commonMistakes.length > 0 && (
-                <div className="space-y-2">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    Common Mistakes
-                  </p>
-                  <ul className="space-y-1.5">
-                    {currentWord.commonMistakes.map((mistake, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-foreground">
-                        <X className="h-4 w-4 text-red-400 mt-0.5 shrink-0" />
-                        <span>{mistake}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Example sentence */}
-              {currentWord.exampleSentence && (
-                <div className="space-y-1">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    Example
-                  </p>
-                  <p className="text-sm italic text-muted-foreground">
-                    &ldquo;{currentWord.exampleSentence}&rdquo;
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+            {/* Example sentence */}
+            {currentWord.exampleSentence && (
+              <div className="space-y-1">
+                <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                  Example
+                </p>
+                <p className="text-sm italic text-zinc-500">
+                  &ldquo;{currentWord.exampleSentence}&rdquo;
+                </p>
+              </div>
+            )}
+          </div>
         )}
 
         {/* ===== Recording Section ===== */}
@@ -429,12 +416,12 @@ export default function PracticePage({
             <button
               onClick={isRecording ? handleStopRecording : handleRecord}
               disabled={!speechSupported || recordingStatus === 'processing'}
-              className={`relative z-10 w-20 h-20 rounded-full flex items-center justify-center transition-all duration-200 ${
+              className={`relative z-10 h-20 w-20 rounded-full flex items-center justify-center transition-all duration-200 ${
                 isRecording
-                  ? 'bg-red-500 hover:bg-red-600 shadow-lg shadow-red-500/25'
+                  ? 'bg-gradient-to-br from-red-500 to-rose-600 shadow-lg shadow-red-500/25 hover:shadow-red-500/40 hover:scale-105'
                   : recordingStatus === 'processing'
-                    ? 'bg-muted cursor-wait'
-                    : 'bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25'
+                    ? 'bg-zinc-800 opacity-60 cursor-wait'
+                    : 'bg-gradient-to-br from-violet-500 to-indigo-600 shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:scale-105'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
               aria-label={isRecording ? 'Stop recording' : 'Start recording'}
             >
@@ -447,7 +434,7 @@ export default function PracticePage({
           </div>
 
           {/* Status text */}
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-zinc-500">
             {recordingStatus === 'idle' && !feedback && 'Tap to record'}
             {recordingStatus === 'listening' && (
               <span className="text-red-400 animate-pulse">Listening...</span>
@@ -460,69 +447,71 @@ export default function PracticePage({
 
           {/* Transcript display */}
           {transcript && !feedback && (
-            <div className="bg-muted/50 border border-border rounded-lg px-4 py-2 max-w-sm text-center">
-              <p className="text-sm text-muted-foreground">You said:</p>
-              <p className="text-foreground font-medium">&ldquo;{transcript}&rdquo;</p>
+            <div className="bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-2 max-w-sm text-center">
+              <p className="text-xs text-zinc-500">You said:</p>
+              <p className="text-zinc-200 font-medium">&ldquo;{transcript}&rdquo;</p>
             </div>
           )}
         </section>
 
         {/* ===== Feedback Panel ===== */}
         {feedback && (
-          <Card className="animate-in fade-in slide-in-from-bottom-4 duration-300">
-            <CardHeader className="pb-4">
+          <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
+            {/* Header with score */}
+            <div className="px-6 pt-6 pb-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">Results</CardTitle>
+                <h3 className="text-lg font-semibold text-zinc-100">Results</h3>
 
                 {/* Score circle */}
-                <div className={`relative w-16 h-16 flex items-center justify-center`}>
+                <div className="relative w-20 h-20 flex items-center justify-center">
                   <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 36 36">
                     <path
                       d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="2"
-                      className="text-muted"
+                      className="text-white/[0.06]"
                     />
                     <path
                       d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                       fill="none"
-                      strokeWidth="2.5"
+                      strokeWidth="3"
                       strokeDasharray={`${feedback.score}, 100`}
                       strokeLinecap="round"
                       className={scoreColor(feedback.score)}
                       stroke="currentColor"
                     />
                   </svg>
-                  <span className={`text-xl font-bold ${scoreColor(feedback.score)}`}>
+                  <span className={`text-2xl font-bold ${scoreColor(feedback.score)}`}>
                     {feedback.score}
                   </span>
                 </div>
               </div>
 
-              <p className="text-sm text-muted-foreground mt-1">{feedback.overallFeedback}</p>
-            </CardHeader>
+              <p className="text-sm text-zinc-300 mt-2">{feedback.overallFeedback}</p>
+            </div>
 
-            <CardContent className="space-y-4">
+            {/* Content */}
+            <div className="px-6 pb-6 space-y-5">
               {/* What you said */}
-              <div className="bg-muted/30 border border-border rounded-lg px-4 py-3">
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
+              <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3">
+                <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-1">
                   What you said
                 </p>
-                <p className="text-foreground">&ldquo;{transcript}&rdquo;</p>
+                <p className="text-zinc-200">&ldquo;{transcript}&rdquo;</p>
               </div>
 
               {/* Strengths */}
               {feedback.strengths.length > 0 && (
                 <div className="space-y-2">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
                     Strengths
                   </p>
                   <ul className="space-y-1.5">
                     {feedback.strengths.map((s, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm">
                         <Check className="h-4 w-4 text-green-400 mt-0.5 shrink-0" />
-                        <span className="text-foreground">{s}</span>
+                        <span className="text-zinc-300">{s}</span>
                       </li>
                     ))}
                   </ul>
@@ -532,14 +521,14 @@ export default function PracticePage({
               {/* Improvements */}
               {feedback.improvements.length > 0 && (
                 <div className="space-y-2">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
                     Areas to Improve
                   </p>
                   <ul className="space-y-1.5">
                     {feedback.improvements.map((imp, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm">
                         <ArrowRight className="h-4 w-4 text-orange-400 mt-0.5 shrink-0" />
-                        <span className="text-foreground">{imp}</span>
+                        <span className="text-zinc-300">{imp}</span>
                       </li>
                     ))}
                   </ul>
@@ -551,7 +540,7 @@ export default function PracticePage({
                 <div>
                   <button
                     onClick={() => setShowDetailedNotes(!showDetailedNotes)}
-                    className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    className="flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-300 transition-colors"
                   >
                     {showDetailedNotes ? (
                       <ChevronUp className="h-4 w-4" />
@@ -564,7 +553,7 @@ export default function PracticePage({
                   {showDetailedNotes && (
                     <ul className="mt-2 space-y-1.5 pl-5">
                       {feedback.detailedNotes.map((note, i) => (
-                        <li key={i} className="text-sm text-muted-foreground list-disc">
+                        <li key={i} className="text-sm text-zinc-500 list-disc">
                           {note}
                         </li>
                       ))}
@@ -573,13 +562,11 @@ export default function PracticePage({
                 </div>
               )}
 
-              <Separator />
-
               {/* Action buttons */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 pt-2">
                 <button
                   onClick={handleTryAgain}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-border hover:bg-muted transition-colors text-sm font-medium"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-white/[0.08] hover:bg-white/[0.06] transition-colors text-sm font-medium text-zinc-300"
                 >
                   <RotateCcw className="h-4 w-4" />
                   Try Again
@@ -588,7 +575,7 @@ export default function PracticePage({
                 {currentWordIndex < words.length - 1 && (
                   <button
                     onClick={handleNextWord}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-medium"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-violet-500 to-indigo-600 text-white hover:from-violet-600 hover:to-indigo-700 transition-all text-sm font-medium"
                   >
                     Next Word
                     <ArrowRight className="h-4 w-4" />
@@ -598,62 +585,60 @@ export default function PracticePage({
                 {currentWordIndex === words.length - 1 && (
                   <Link
                     href={`/accent/${slug}`}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-medium"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-violet-500 to-indigo-600 text-white hover:from-violet-600 hover:to-indigo-700 transition-all text-sm font-medium"
                   >
                     Finish Lesson
                     <Check className="h-4 w-4" />
                   </Link>
                 )}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
 
         {/* ===== Lesson Tips (shown when no feedback) ===== */}
         {!feedback && lesson.tips.length > 0 && (
-          <Card>
-            <CardHeader className="pb-2">
-              <button
-                onClick={() => setShowDetail(!showDetail)}
-                className="flex items-center justify-between w-full"
-              >
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <Info className="h-4 w-4 text-muted-foreground" />
-                  Lesson Tips
-                </CardTitle>
-                {showDetail ? (
-                  <ChevronUp className="h-4 w-4 text-muted-foreground" />
-                ) : (
-                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                )}
-              </button>
-            </CardHeader>
+          <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
+            <button
+              onClick={() => setShowDetail(!showDetail)}
+              className="flex items-center justify-between w-full px-5 py-4"
+            >
+              <span className="text-sm font-medium text-zinc-200 flex items-center gap-2">
+                <Info className="h-4 w-4 text-zinc-500" />
+                Lesson Tips
+              </span>
+              {showDetail ? (
+                <ChevronUp className="h-4 w-4 text-zinc-500" />
+              ) : (
+                <ChevronDown className="h-4 w-4 text-zinc-500" />
+              )}
+            </button>
             {showDetail && (
-              <CardContent>
+              <div className="px-5 pb-4">
                 <ul className="space-y-1.5">
                   {lesson.tips.map((tip, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                      <span className="text-primary mt-0.5">&#x2022;</span>
+                    <li key={i} className="flex items-start gap-2 text-sm text-zinc-400">
+                      <span className="text-violet-400 mt-0.5">&#x2022;</span>
                       <span>{tip}</span>
                     </li>
                   ))}
                 </ul>
-              </CardContent>
+              </div>
             )}
-          </Card>
+          </div>
         )}
       </main>
 
       {/* ===== Bottom Navigation ===== */}
-      <footer className="sticky bottom-0 bg-background/95 backdrop-blur border-t border-border">
+      <footer className="sticky bottom-0 bg-zinc-950/80 backdrop-blur-xl border-t border-white/[0.06]">
         <div className="max-w-2xl mx-auto px-4 py-3">
           {/* Word dots */}
           <div className="flex items-center justify-center gap-1.5 mb-3">
             {words.map((_, i) => {
               const wordScore = scores[i]
-              let dotClass = 'bg-muted'
+              let dotClass = 'bg-zinc-800'
               if (i === currentWordIndex) {
-                dotClass = 'bg-primary ring-2 ring-primary/30'
+                dotClass = 'bg-violet-500 ring-2 ring-violet-500/30'
               } else if (wordScore !== null && wordScore >= 80) {
                 dotClass = 'bg-green-400'
               } else if (wordScore !== null && wordScore >= 50) {
@@ -666,7 +651,7 @@ export default function PracticePage({
                 <button
                   key={i}
                   onClick={() => goToWord(i)}
-                  className={`w-2.5 h-2.5 rounded-full transition-all duration-200 ${dotClass} hover:scale-125`}
+                  className={`w-2 h-2 rounded-full transition-all duration-200 ${dotClass} hover:scale-125`}
                   aria-label={`Go to word ${i + 1}`}
                 />
               )
@@ -678,20 +663,20 @@ export default function PracticePage({
             <button
               onClick={() => goToWord(currentWordIndex - 1)}
               disabled={currentWordIndex === 0}
-              className="flex items-center gap-1.5 px-3 py-2 text-sm text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-1.5 px-3 py-2 text-sm text-zinc-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
               <ArrowLeft className="h-4 w-4" />
               Previous
             </button>
 
-            <span className="text-xs text-muted-foreground">
+            <span className="text-xs text-zinc-600">
               {scores.filter((s) => s !== null).length} / {words.length} attempted
             </span>
 
             <button
               onClick={() => goToWord(currentWordIndex + 1)}
               disabled={currentWordIndex === words.length - 1}
-              className="flex items-center gap-1.5 px-3 py-2 text-sm text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-1.5 px-3 py-2 text-sm text-zinc-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
               Next
               <ArrowRight className="h-4 w-4" />
