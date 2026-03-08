@@ -54,10 +54,6 @@ function pickRandom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)]
 }
 
-/**
- * Pick a random practice phrase (exampleSentence) from the accent's lessons.
- * Prefers "phrases" category lessons but falls back to any lesson.
- */
 function pickPhraseForAccent(accent: AccentData): string {
   const phraseLessons = accent.lessons.filter((l) => l.category === "phrases")
   const pool = phraseLessons.length > 0 ? phraseLessons : accent.lessons
@@ -66,17 +62,12 @@ function pickPhraseForAccent(accent: AccentData): string {
   return word.exampleSentence
 }
 
-/**
- * Pick wrong-answer accents, preferring those with a different lang code
- * so the TTS voice actually sounds distinct.
- */
 function pickWrongAnswers(
   correctAccent: AccentData,
   count: number
 ): AccentData[] {
   const correctLang = voiceLangMap[correctAccent.slug] ?? "en-US"
 
-  // Separate candidates into distinct-sounding vs same-lang
   const others = accents.filter((a) => a.slug !== correctAccent.slug)
   const distinctLang = others.filter(
     (a) => (voiceLangMap[a.slug] ?? "en-US") !== correctLang
@@ -89,7 +80,6 @@ function pickWrongAnswers(
   const shuffledDistinct = shuffle(distinctLang)
   const shuffledSame = shuffle(sameLang)
 
-  // Fill from distinct first, then same-lang as fallback
   for (const a of shuffledDistinct) {
     if (selected.length >= count) break
     selected.push(a)
@@ -123,7 +113,6 @@ export default function GuessTheAccentPage() {
   const [roundHistory, setRoundHistory] = useState<RoundHistoryEntry[]>([])
   const [choices, setChoices] = useState<AccentData[]>([])
 
-  // Ref to prevent double-play on mount in strict mode
   const hasAutoPlayed = useRef(false)
 
   // ---- Core logic ----
@@ -161,7 +150,6 @@ export default function GuessTheAccentPage() {
     hasAutoPlayed.current = false
   }, [])
 
-  // Auto-play phrase when entering "listening" state
   useEffect(() => {
     if (gameState === "listening" && currentAccent && currentPhrase && !hasAutoPlayed.current) {
       hasAutoPlayed.current = true
@@ -181,7 +169,6 @@ export default function GuessTheAccentPage() {
       if (gameState !== "listening" && gameState !== "guessing") return
       if (!currentAccent) return
 
-      // Stop any playing audio
       if (typeof window !== "undefined" && window.speechSynthesis) {
         window.speechSynthesis.cancel()
       }
@@ -223,40 +210,38 @@ export default function GuessTheAccentPage() {
   // Intro Screen
   if (gameState === "intro") {
     return (
-      <div className="min-h-screen bg-zinc-950 text-zinc-100">
-        <div className="mx-auto max-w-2xl px-6 py-28 sm:px-8 lg:px-10">
+      <div className="min-h-screen text-zinc-100">
+        <div className="mx-auto max-w-2xl px-6 py-24 sm:py-32">
           <div className="flex flex-col items-center text-center">
-            <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500/20 to-indigo-500/20 border border-violet-500/20">
-              <Ear className="h-8 w-8 text-violet-400" />
+            <div className="mb-8 flex h-14 w-14 items-center justify-center rounded-xl bg-amber-400/10 border border-amber-400/10">
+              <Ear className="h-7 w-7 text-amber-400" />
             </div>
 
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-              <span className="bg-gradient-to-r from-violet-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">
-                Guess the Accent
-              </span>
+            <h1 className="font-display text-4xl sm:text-5xl text-zinc-100 leading-tight">
+              Guess the Accent
             </h1>
 
-            <p className="mt-4 text-lg text-zinc-400 leading-relaxed max-w-md">
+            <p className="mt-4 text-[15px] text-zinc-500 leading-relaxed max-w-md">
               Listen to a phrase and guess which accent it is.
               <br />
               Can you identify all 8 accents?
             </p>
 
-            <div className="mt-10 space-y-4 text-sm text-left max-w-xs">
+            <div className="mt-12 space-y-4 text-[13px] text-left max-w-xs">
               <div className="flex items-start gap-3">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-500/15 text-xs font-semibold text-violet-400">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-amber-400/10 text-[11px] font-semibold text-amber-400/80">
                   1
                 </span>
                 <span className="text-zinc-500">Listen to a phrase spoken in a mystery accent</span>
               </div>
               <div className="flex items-start gap-3">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-500/15 text-xs font-semibold text-violet-400">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-amber-400/10 text-[11px] font-semibold text-amber-400/80">
                   2
                 </span>
                 <span className="text-zinc-500">Pick the correct accent from 4 choices</span>
               </div>
               <div className="flex items-start gap-3">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-500/15 text-xs font-semibold text-violet-400">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-amber-400/10 text-[11px] font-semibold text-amber-400/80">
                   3
                 </span>
                 <span className="text-zinc-500">Score points across 10 rounds</span>
@@ -265,9 +250,9 @@ export default function GuessTheAccentPage() {
 
             <button
               onClick={startGame}
-              className="mt-12 inline-flex items-center gap-2 bg-gradient-to-r from-violet-500 to-indigo-600 rounded-xl px-8 py-3.5 text-white font-semibold shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:scale-105 transition-all duration-200 active:scale-100"
+              className="mt-14 inline-flex items-center gap-2 bg-gradient-to-r from-amber-400 to-orange-500 rounded-lg px-8 py-3 text-[#0a0a0c] font-semibold shadow-lg shadow-amber-500/15 hover:brightness-110 hover:scale-[1.02] transition-all duration-200 active:scale-100 text-[14px]"
             >
-              <Play className="h-5 w-5" />
+              <Play className="h-4 w-4" />
               Start Game
             </button>
           </div>
@@ -280,58 +265,58 @@ export default function GuessTheAccentPage() {
   if (gameState === "gameover") {
     const isPerfect = score === TOTAL_ROUNDS
     return (
-      <div className="min-h-screen bg-zinc-950 text-zinc-100">
-        <div className="mx-auto max-w-2xl px-6 py-16 sm:px-8 lg:px-10">
+      <div className="min-h-screen text-zinc-100">
+        <div className="mx-auto max-w-2xl px-6 py-16">
           <div className="text-center">
-            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-500/20">
-              <Trophy className="h-8 w-8 text-amber-400" />
+            <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-amber-400/10 border border-amber-400/10">
+              <Trophy className="h-7 w-7 text-amber-400" />
             </div>
 
-            <h1 className="text-3xl font-bold tracking-tight text-zinc-100">
-              Game Over!
+            <h1 className="font-display text-3xl text-zinc-100">
+              Game Over
             </h1>
 
-            <p className="mt-4">
-              <span className={`text-5xl font-bold ${isPerfect ? "bg-gradient-to-r from-violet-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent" : "text-violet-400"}`}>
+            <p className="mt-6">
+              <span className={`text-5xl font-bold ${isPerfect ? "text-amber-400" : "text-zinc-200"}`}>
                 {score}
               </span>
-              <span className="text-2xl text-zinc-500"> / {TOTAL_ROUNDS}</span>
+              <span className="text-2xl text-zinc-600"> / {TOTAL_ROUNDS}</span>
             </p>
 
-            <p className="mt-3 text-lg text-zinc-400">
+            <p className="mt-3 text-[15px] text-zinc-500">
               {getPerformanceRating(score)}
             </p>
           </div>
 
           {/* Round History */}
-          <div className="mt-10">
-            <h2 className="text-sm font-medium text-zinc-500 uppercase tracking-wide mb-4">
+          <div className="mt-12">
+            <h2 className="text-[11px] font-medium text-zinc-600 uppercase tracking-[0.15em] mb-4">
               Round History
             </h2>
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               {roundHistory.map((entry, i) => (
                 <div
                   key={i}
                   className="flex items-center gap-3 rounded-lg px-4 py-3 bg-white/[0.02]"
                 >
+                  <span className="text-[11px] font-medium text-zinc-700 w-4">
+                    {i + 1}
+                  </span>
                   <div
-                    className={`w-0.5 h-6 rounded-full shrink-0 ${
+                    className={`w-0.5 h-5 rounded-full shrink-0 ${
                       entry.correct ? "bg-emerald-500" : "bg-rose-500"
                     }`}
                   />
-                  <span className="text-xs font-medium text-zinc-600 w-5">
-                    {i + 1}
-                  </span>
                   {entry.correct ? (
                     <Check className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
                   ) : (
                     <X className="h-3.5 w-3.5 shrink-0 text-rose-400" />
                   )}
-                  <span className="text-sm text-zinc-300 flex-1">
+                  <span className="text-[13px] text-zinc-400 flex-1">
                     {entry.accent}
                   </span>
                   {!entry.correct && (
-                    <span className="text-xs text-zinc-500">
+                    <span className="text-[11px] text-zinc-600">
                       Guessed: {entry.guess}
                     </span>
                   )}
@@ -344,14 +329,14 @@ export default function GuessTheAccentPage() {
           <div className="mt-10 flex flex-col items-center gap-4">
             <button
               onClick={startGame}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-violet-500 to-indigo-600 rounded-xl px-8 py-3.5 text-white font-semibold shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:scale-105 transition-all duration-200 active:scale-100"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-400 to-orange-500 rounded-lg px-8 py-3 text-[#0a0a0c] font-semibold shadow-lg shadow-amber-500/15 hover:brightness-110 hover:scale-[1.02] transition-all duration-200 active:scale-100 text-[14px]"
             >
-              <RotateCcw className="h-5 w-5" />
+              <RotateCcw className="h-4 w-4" />
               Play Again
             </button>
             <Link
               href="/"
-              className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors"
+              className="text-[13px] text-zinc-600 hover:text-zinc-400 transition-colors"
             >
               Back to Home
             </Link>
@@ -363,86 +348,85 @@ export default function GuessTheAccentPage() {
 
   // Listening / Guessing / Result Screens
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100">
-      <div className="mx-auto max-w-3xl px-6 py-8 sm:px-8 lg:px-10">
-        {/* Top Bar: Progress + Round + Score */}
-        <div className="mb-8">
-          <div className="h-1 bg-zinc-900 rounded-full overflow-hidden mb-4">
+    <div className="min-h-screen text-zinc-100">
+      <div className="mx-auto max-w-3xl px-6 py-8">
+        {/* Top Bar */}
+        <div className="mb-10">
+          <div className="h-px bg-zinc-900 rounded-full overflow-hidden mb-4">
             <div
-              className="h-full bg-gradient-to-r from-violet-500 to-indigo-500 rounded-full transition-all duration-500 ease-out"
+              className="h-full bg-amber-400/60 transition-all duration-500 ease-out"
               style={{ width: `${(currentRound / TOTAL_ROUNDS) * 100}%` }}
             />
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-zinc-500">
-              Round <span className="text-zinc-300 font-medium">{currentRound}</span> of {TOTAL_ROUNDS}
+            <span className="text-[13px] text-zinc-600">
+              Round <span className="text-zinc-400 font-medium">{currentRound}</span> of {TOTAL_ROUNDS}
             </span>
-            <span className="text-sm font-medium bg-violet-500/15 text-violet-400 rounded-full px-3 py-1">
+            <span className="text-[12px] font-medium text-amber-400/70 bg-amber-400/8 rounded-md px-3 py-1">
               Score: {score}
             </span>
           </div>
         </div>
 
-        {/* Result Screen Overlay */}
+        {/* Result Banner */}
         {gameState === "result" && currentAccent && (
           <div className="mb-8">
             <div
-              className={`rounded-2xl border bg-white/[0.03] backdrop-blur-sm p-6 ${
+              className={`rounded-xl border bg-white/[0.02] p-6 ${
                 isCorrect
-                  ? "border-emerald-500/40"
-                  : "border-rose-500/40"
+                  ? "border-emerald-500/30"
+                  : "border-rose-500/30"
               }`}
             >
               <div className="flex items-center gap-3 mb-4">
                 {isCorrect ? (
                   <>
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/20 border border-emerald-500/30">
-                      <Check className="h-5 w-5 text-emerald-400" />
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/15">
+                      <Check className="h-4 w-4 text-emerald-400" />
                     </div>
-                    <span className="text-xl font-bold text-emerald-400">
+                    <span className="text-lg font-semibold text-emerald-400">
                       Correct!
                     </span>
                   </>
                 ) : (
                   <>
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-500/20 border border-rose-500/30">
-                      <X className="h-5 w-5 text-rose-400" />
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-rose-500/15">
+                      <X className="h-4 w-4 text-rose-400" />
                     </div>
-                    <span className="text-xl font-bold text-rose-400">
-                      Not quite!
+                    <span className="text-lg font-semibold text-rose-400">
+                      Not quite
                     </span>
                   </>
                 )}
               </div>
 
               <div className="space-y-3">
-                <p className="text-zinc-300">
-                  <span className="text-zinc-500">The accent was: </span>
+                <p className="text-zinc-300 text-[14px]">
+                  <span className="text-zinc-600">The accent was: </span>
                   <span className="font-semibold">
                     {currentAccent.emoji} {currentAccent.name}
                   </span>
-                  <span className="text-zinc-500">
-                    {" "}
-                    — {currentAccent.region}
+                  <span className="text-zinc-600">
+                    {" "}— {currentAccent.region}
                   </span>
                 </p>
 
                 {!isCorrect && selectedAccent && (
-                  <p className="text-sm text-zinc-500">
+                  <p className="text-[13px] text-zinc-600">
                     You guessed:{" "}
-                    <span className="text-zinc-400">
+                    <span className="text-zinc-500">
                       {selectedAccent.emoji} {selectedAccent.name}
                     </span>
                   </p>
                 )}
 
-                <p className="text-sm text-zinc-400 italic border-l-2 border-zinc-800 pl-3">
+                <p className="text-[13px] text-zinc-500 italic border-l border-zinc-800 pl-3">
                   &ldquo;{currentPhrase}&rdquo;
                 </p>
 
                 {currentAccent.keyFeatures.length > 0 && (
-                  <p className="text-sm text-zinc-500">
-                    <span className="text-violet-400 font-medium">Tip: </span>
+                  <p className="text-[13px] text-zinc-600">
+                    <span className="text-amber-400/80 font-medium">Tip: </span>
                     {currentAccent.keyFeatures[0]}
                   </p>
                 )}
@@ -450,7 +434,7 @@ export default function GuessTheAccentPage() {
 
               <button
                 onClick={nextRound}
-                className="mt-6 inline-flex items-center gap-2 bg-gradient-to-r from-violet-500 to-indigo-600 rounded-xl px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:scale-105 transition-all duration-200 active:scale-100"
+                className="mt-6 inline-flex items-center gap-2 bg-gradient-to-r from-amber-400 to-orange-500 rounded-lg px-6 py-2.5 text-[13px] font-semibold text-[#0a0a0c] shadow-lg shadow-amber-500/15 hover:brightness-110 hover:scale-[1.02] transition-all duration-200 active:scale-100"
               >
                 {currentRound >= TOTAL_ROUNDS ? (
                   <>
@@ -468,7 +452,7 @@ export default function GuessTheAccentPage() {
           </div>
         )}
 
-        {/* Speaker / Play Button Area */}
+        {/* Speaker / Play Button */}
         {(gameState === "listening" || gameState === "guessing") && (
           <div className="mb-10 text-center">
             <button
@@ -479,25 +463,24 @@ export default function GuessTheAccentPage() {
                 }
               }}
               disabled={isPlaying}
-              className="group relative mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-white/[0.04] border-2 border-white/[0.08] transition-all duration-300 hover:border-violet-500/40 hover:bg-white/[0.06] disabled:opacity-70"
+              className="group relative mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-white/[0.03] border border-white/[0.06] transition-all duration-300 hover:border-amber-400/30 hover:bg-white/[0.05] disabled:opacity-70"
             >
-              {/* Pulse animation when playing */}
               {isPlaying && (
                 <>
-                  <span className="absolute inset-0 animate-ping rounded-full bg-violet-500/20" />
-                  <span className="absolute inset-0 animate-pulse rounded-full bg-violet-500/10" />
+                  <span className="absolute inset-0 animate-ping rounded-full bg-amber-400/10" />
+                  <span className="absolute inset-0 animate-pulse rounded-full bg-amber-400/5" />
                 </>
               )}
               {isPlaying ? (
-                <Volume2 className="h-10 w-10 text-violet-400 animate-pulse" />
+                <Volume2 className="h-10 w-10 text-amber-400 animate-pulse" />
               ) : (
-                <Play className="h-10 w-10 text-zinc-300 transition-colors group-hover:text-violet-400" />
+                <Play className="h-10 w-10 text-zinc-400 transition-colors group-hover:text-amber-400" />
               )}
             </button>
 
-            <p className="text-sm text-zinc-500">
+            <p className="text-[13px] text-zinc-600">
               {isPlaying ? (
-                <span className="text-violet-400">Listen carefully...</span>
+                <span className="text-amber-400/80">Listen carefully...</span>
               ) : gameState === "listening" ? (
                 "Tap to play the accent"
               ) : (
@@ -508,7 +491,7 @@ export default function GuessTheAccentPage() {
             {!isPlaying && gameState === "guessing" && (
               <button
                 onClick={() => playPhrase()}
-                className="mt-2 inline-flex items-center gap-1.5 text-xs text-zinc-500 hover:text-violet-400 transition-colors"
+                className="mt-2 inline-flex items-center gap-1.5 text-[12px] text-zinc-600 hover:text-amber-400 transition-colors"
               >
                 <RotateCcw className="h-3 w-3" />
                 Play Again
@@ -517,24 +500,24 @@ export default function GuessTheAccentPage() {
           </div>
         )}
 
-        {/* Choices Grid — interactive during listening/guessing */}
+        {/* Choices Grid */}
         {(gameState === "listening" || gameState === "guessing") && (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
             {choices.map((accent) => (
               <button
                 key={accent.slug}
                 onClick={() => handleGuess(accent.slug)}
-                className="group text-left transition-all duration-200 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 hover:scale-[1.02] active:scale-[0.99]"
+                className="group text-left transition-all duration-200 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/50 hover:scale-[1.01] active:scale-[0.99]"
               >
-                <div className="h-full flex items-center gap-4 p-4 rounded-xl bg-white/[0.03] border border-white/[0.06] transition-all duration-200 group-hover:border-white/[0.12] group-hover:bg-white/[0.06]">
-                  <span className="text-3xl" role="img">
+                <div className="h-full flex items-center gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] transition-all duration-200 group-hover:border-white/[0.1] group-hover:bg-white/[0.04]">
+                  <span className="text-2xl" role="img">
                     {accent.emoji}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-zinc-100 truncate">
+                    <p className="text-[14px] font-semibold text-zinc-200 truncate">
                       {accent.name}
                     </p>
-                    <p className="text-sm text-zinc-500 truncate">
+                    <p className="text-[12px] text-zinc-600 truncate">
                       {accent.region}
                     </p>
                   </div>
@@ -544,9 +527,9 @@ export default function GuessTheAccentPage() {
           </div>
         )}
 
-        {/* Choices shown in result state (dimmed, with correct/wrong indicators) */}
+        {/* Result choices */}
         {gameState === "result" && (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
             {choices.map((accent) => {
               const isSelected = selectedAnswer === accent.slug
               const isCorrectAnswer = accent.slug === currentAccent?.slug
@@ -557,28 +540,28 @@ export default function GuessTheAccentPage() {
                   key={accent.slug}
                   className={`flex items-center gap-4 p-4 rounded-xl border transition-all duration-200 ${
                     isCorrectAnswer
-                      ? "border-emerald-500/50 bg-emerald-500/[0.08]"
+                      ? "border-emerald-500/40 bg-emerald-500/[0.06]"
                       : isWrong
-                        ? "border-rose-500/50 bg-rose-500/[0.08]"
-                        : "border-white/[0.04] bg-white/[0.02] opacity-40"
+                        ? "border-rose-500/40 bg-rose-500/[0.06]"
+                        : "border-white/[0.03] bg-white/[0.01] opacity-40"
                   }`}
                 >
-                  <span className="text-3xl" role="img">
+                  <span className="text-2xl" role="img">
                     {accent.emoji}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-zinc-100 truncate">
+                    <p className="text-[14px] font-semibold text-zinc-200 truncate">
                       {accent.name}
                     </p>
-                    <p className="text-sm text-zinc-500 truncate">
+                    <p className="text-[12px] text-zinc-600 truncate">
                       {accent.region}
                     </p>
                   </div>
                   {isCorrectAnswer && (
-                    <Check className="h-5 w-5 shrink-0 text-emerald-400" />
+                    <Check className="h-4 w-4 shrink-0 text-emerald-400" />
                   )}
                   {isWrong && (
-                    <X className="h-5 w-5 shrink-0 text-rose-400" />
+                    <X className="h-4 w-4 shrink-0 text-rose-400" />
                   )}
                 </div>
               )
