@@ -43,6 +43,9 @@ export default function RootLayout({
                   <a href="/" className="hover:text-foreground transition-colors">
                     Accents
                   </a>
+                  <a href="/games/guess-the-accent" className="hover:text-foreground transition-colors">
+                    Games
+                  </a>
                 </nav>
               </div>
             </header>

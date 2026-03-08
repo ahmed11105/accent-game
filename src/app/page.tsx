@@ -1,7 +1,7 @@
 import { accents, type AccentData } from "@/data/accents"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Globe, ChevronRight } from "lucide-react"
+import { Globe, ChevronRight, Ear } from "lucide-react"
 
 function getDifficultyColor(difficulty: AccentData["difficulty"]) {
   switch (difficulty) {
@@ -36,6 +36,29 @@ export default function Home() {
             Built for actors who want to expand their range.
           </p>
         </div>
+      </section>
+
+      {/* Games Section */}
+      <section className="mx-auto max-w-6xl px-4 pt-16 sm:px-6 lg:px-8">
+        <a
+          href="/games/guess-the-accent"
+          className="group block rounded-xl transition-transform duration-300 hover:scale-[1.01] focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
+        >
+          <div className="relative overflow-hidden rounded-xl border border-zinc-800 bg-gradient-to-r from-violet-950/60 via-zinc-900/80 to-indigo-950/60 p-6 sm:p-8 transition-all duration-300 group-hover:border-violet-500/50 group-hover:shadow-lg group-hover:shadow-violet-500/10">
+            <div className="flex items-center gap-4">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-violet-500/20 text-violet-400">
+                <Ear className="h-7 w-7" />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-xl font-bold text-zinc-100">Guess the Accent</h2>
+                <p className="mt-1 text-sm text-zinc-400">
+                  Listen to a phrase and guess which accent it is. Test your ear across 10 rounds!
+                </p>
+              </div>
+              <ChevronRight className="h-5 w-5 text-zinc-600 transition-all duration-300 group-hover:text-violet-400 group-hover:translate-x-1" />
+            </div>
+          </div>
+        </a>
       </section>
 
       {/* Accent Cards Grid */}

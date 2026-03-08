@@ -49,3 +49,5 @@ screenshots/
 
 # supabase
 supabase/.temp/
+
+.vercel
