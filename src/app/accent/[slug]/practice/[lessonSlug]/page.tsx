@@ -3,7 +3,7 @@
 import { use, useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { accents, PracticeWordData } from '@/data/accents'
-import { speakText, isSpeechRecognitionSupported, createSpeechRecognition } from '@/lib/speech'
+import { speakText, isSpeechRecognitionSupported, createSpeechRecognition, stopAudio } from '@/lib/speech'
 import { generateFeedback, FeedbackResult } from '@/lib/feedback'
 import {
   Volume2,
@@ -110,7 +110,7 @@ export default function PracticePage({
     if (!currentWord || isPlaying) return
     setIsPlaying(true)
     try {
-      await speakText(currentWord.word, getVoiceLang(slug))
+      await speakText(currentWord.word, getVoiceLang(slug), 1.0, slug)
     } catch {
       // Silently handle speech errors
     } finally {

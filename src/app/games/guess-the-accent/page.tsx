@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from "react"
 import { accents, type AccentData } from "@/data/accents"
-import { speakText } from "@/lib/speech"
+import { speakSentence, stopAudio } from "@/lib/speech"
 import {
   Volume2,
   RotateCcw,
@@ -54,12 +54,12 @@ function pickRandom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)]
 }
 
-function pickPhraseForAccent(accent: AccentData): string {
+function pickPhraseForAccent(accent: AccentData): { word: string; sentence: string } {
   const phraseLessons = accent.lessons.filter((l) => l.category === "phrases")
   const pool = phraseLessons.length > 0 ? phraseLessons : accent.lessons
   const lesson = pickRandom(pool)
-  const word = pickRandom(lesson.practiceWords)
-  return word.exampleSentence
+  const practiceWord = pickRandom(lesson.practiceWords)
+  return { word: practiceWord.word, sentence: practiceWord.exampleSentence }
 }
 
 function pickWrongAnswers(
@@ -108,6 +108,7 @@ export default function GuessTheAccentPage() {
   const [score, setScore] = useState(0)
   const [currentAccent, setCurrentAccent] = useState<AccentData | null>(null)
   const [currentPhrase, setCurrentPhrase] = useState("")
+  const [currentWord, setCurrentWord] = useState("")
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [roundHistory, setRoundHistory] = useState<RoundHistoryEntry[]>([])
@@ -118,32 +119,34 @@ export default function GuessTheAccentPage() {
   // ---- Core logic ----
 
   const playPhrase = useCallback(
-    async (phrase?: string, accent?: AccentData) => {
+    async (phrase?: string, accent?: AccentData, word?: string) => {
       const text = phrase ?? currentPhrase
       const target = accent ?? currentAccent
+      const sourceWord = word ?? currentWord
       if (!text || !target) return
 
       const lang = voiceLangMap[target.slug] ?? "en-US"
       setIsPlaying(true)
       try {
-        await speakText(text, lang, 0.9)
+        await speakSentence(sourceWord, text, target.slug, lang, 0.9)
       } catch {
         // Silently handle TTS errors
       } finally {
         setIsPlaying(false)
       }
     },
-    [currentPhrase, currentAccent]
+    [currentPhrase, currentAccent, currentWord]
   )
 
   const pickRound = useCallback(() => {
     const accent = pickRandom(accents)
-    const phrase = pickPhraseForAccent(accent)
+    const { word, sentence } = pickPhraseForAccent(accent)
     const wrong = pickWrongAnswers(accent, CHOICES_PER_ROUND - 1)
     const shuffledChoices = shuffle([accent, ...wrong])
 
     setCurrentAccent(accent)
-    setCurrentPhrase(phrase)
+    setCurrentPhrase(sentence)
+    setCurrentWord(word)
     setChoices(shuffledChoices)
     setSelectedAnswer(null)
     setGameState("listening")
@@ -153,9 +156,9 @@ export default function GuessTheAccentPage() {
   useEffect(() => {
     if (gameState === "listening" && currentAccent && currentPhrase && !hasAutoPlayed.current) {
       hasAutoPlayed.current = true
-      playPhrase(currentPhrase, currentAccent)
+      playPhrase(currentPhrase, currentAccent, currentWord)
     }
-  }, [gameState, currentAccent, currentPhrase, playPhrase])
+  }, [gameState, currentAccent, currentPhrase, currentWord, playPhrase])
 
   const startGame = useCallback(() => {
     setCurrentRound(1)
@@ -169,9 +172,7 @@ export default function GuessTheAccentPage() {
       if (gameState !== "listening" && gameState !== "guessing") return
       if (!currentAccent) return
 
-      if (typeof window !== "undefined" && window.speechSynthesis) {
-        window.speechSynthesis.cancel()
-      }
+      stopAudio()
 
       const correct = slug === currentAccent.slug
       setSelectedAnswer(slug)
